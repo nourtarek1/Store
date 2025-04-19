@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,10 @@ namespace Persention
         // endpoint : public non-static method
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts([FromQuery]ProductSpecificationsParamter productSpecificationsParamter)
         {
-            var result = await servicesManager.ProductService.GetAllProductsAsync();
+
+            var result = await servicesManager.ProductService.GetAllProductsAsync(productSpecificationsParamter);
             if (result is null) return BadRequest();
             return Ok(result);
         }
@@ -38,7 +40,7 @@ namespace Persention
             return Ok(result);
         }
 
-        [HttpGet("typs")]
+        [HttpGet("types")]
         public async Task<IActionResult> GetAllTyps()
         {
             var result = await servicesManager.ProductService.GetAllTypesAsync();

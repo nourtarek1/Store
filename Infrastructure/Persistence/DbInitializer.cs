@@ -1,7 +1,10 @@
 ﻿using Domian.Contracts;
+using Domian.Identity;
 using Domian.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
+using Persistence.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,10 +18,21 @@ namespace Persistence
     public class DbInitializer : IDbInitializer
     {
         private readonly StoreDbContext _context;
+        private readonly StoreIdentityDbContext _identityDbContext;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public DbInitializer(StoreDbContext context)
+        public DbInitializer(
+            StoreDbContext context,
+            StoreIdentityDbContext identityDbContext,
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager
+            )
         {
             _context = context;
+            _identityDbContext = identityDbContext;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
         public async Task InitializeAsync()
         {
@@ -82,6 +96,53 @@ namespace Persistence
                     await _context.products.AddRangeAsync(products);
                     await _context.SaveChangesAsync();
                 }
+            }
+        }
+
+        public async Task InitializeIdentityAsync()
+        {
+            if (_identityDbContext.Database.GetPendingMigrations().Any())
+            {
+                await _identityDbContext.Database.MigrateAsync();
+            }
+
+            if (!_roleManager.Roles.Any())
+            {
+                await _roleManager.CreateAsync(new IdentityRole()
+                {
+                    Name ="Admin"
+                });
+                await _roleManager.CreateAsync(new IdentityRole()
+                {
+                    Name = "SuperAdmin"
+                });
+            }
+
+
+            if (await _userManager.FindByNameAsync("SuperAdmin") == null)
+            {
+                var superAdminUser = new AppUser()
+                {
+                    DisplayName = "Super Admin",
+                    Email = "SuperAdmin@gmail.com",
+                    UserName = "SuperAdmin",
+                    PhoneNumber = "0123456789"
+                };
+                await _userManager.CreateAsync(superAdminUser, "0108584583aA@");
+                await _userManager.AddToRoleAsync(superAdminUser, "SuperAdmin");
+            }
+
+            if (await _userManager.FindByNameAsync("Admin") == null)
+            {
+                var adminUser = new AppUser()
+                {
+                    DisplayName = "Admin",
+                    Email = "Admin@gmail.com",
+                    UserName = "Admin",
+                    PhoneNumber = "0123456789"
+                };
+                await _userManager.CreateAsync(adminUser, "0108584583aA#");
+                await _userManager.AddToRoleAsync(adminUser, "Admin");
             }
         }
     }

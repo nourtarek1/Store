@@ -50,6 +50,8 @@ namespace Store.Api.Middlewares
                 {
                     NotFoundException =>StatusCodes.Status404NotFound,
                     BadRequestException =>StatusCodes.Status400BadRequest,
+                    ValidationException => HandleValidationExceptionAsync((ValidationException)ex ,response),
+                    UnAuthorizedException =>StatusCodes.Status401Unauthorized,
                     _ =>StatusCodes.Status500InternalServerError
                 };
                 context.Response.StatusCode = response.StatusCode;
@@ -58,6 +60,13 @@ namespace Store.Api.Middlewares
                 // 4 .Return Response 
 
             }
+
+            
+        }
+        private static int HandleValidationExceptionAsync(ValidationException ex , ErrorDetails response)
+        {
+            response.Errors = ex.Errors;
+            return StatusCodes.Status400BadRequest;
         }
     }
 }

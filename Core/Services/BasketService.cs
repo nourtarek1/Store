@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Services
 {
 
-    internal class BasketService(IBasketRepository basketRepository , IMapper mapper) : IBasketService
+    public class BasketService(IBasketRepository basketRepository , IMapper mapper) : IBasketService
     {
         public async Task<BasketDto?> GetBasketAsync(string id)
         {

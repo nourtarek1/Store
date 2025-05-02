@@ -5,6 +5,9 @@ using Persistence;
 using Microsoft.AspNetCore.Builder;
 using Domian.Contracts;
 using Store.Api.Middlewares;
+using Domian.Identity;
+using Microsoft.AspNetCore.Identity;
+using Persistence.Identity;
 
 namespace Store.Api.Extentions
 {
@@ -21,6 +24,7 @@ namespace Store.Api.Extentions
 
             //DbContext
             services.AddInfrastructureServices(configuration);
+            services.AddIdentityServices();
             services.AddApplicationServices();
 
 
@@ -56,6 +60,7 @@ namespace Store.Api.Extentions
             using var scope = app.Services.CreateScope();
             var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
             await dbInitializer.InitializeAsync();
+            await dbInitializer.InitializeIdentityAsync();
             #endregion
 
             app.UseMiddleware<GlobelErrorHandlingMiddleware>();
@@ -76,6 +81,14 @@ namespace Store.Api.Extentions
             app.MapControllers();
 
             return app;
+        }
+
+
+        private static IServiceCollection AddIdentityServices(this IServiceCollection services)
+        {
+            services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+            return services;
         }
     }
 

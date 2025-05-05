@@ -1,4 +1,4 @@
-﻿namespace Domian.Identity
+﻿namespace Domian.Models.Identity
 {
     public class Address
     {

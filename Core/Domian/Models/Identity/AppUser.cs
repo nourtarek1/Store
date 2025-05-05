@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domian.Identity
+namespace Domian.Models.Identity
 {
     public class AppUser : IdentityUser
     {
-        public string  DisplayName { get; set; }
+        public string DisplayName { get; set; }
         public Address Address { get; set; }
     }
 }

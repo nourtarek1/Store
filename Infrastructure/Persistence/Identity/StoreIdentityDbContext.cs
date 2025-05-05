@@ -1,4 +1,4 @@
-﻿using Domian.Identity;
+﻿using Domian.Models.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;

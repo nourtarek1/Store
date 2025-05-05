@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
 using System;
@@ -14,6 +15,7 @@ namespace Persention
     public class BasketsController(IServicesManager servicesManager) : ControllerBase
     {
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetBasketById(string id)
         {
              var result =await servicesManager.BasketService.GetBasketAsync(id);
@@ -21,6 +23,8 @@ namespace Persention
         }
 
         [HttpPost]
+        [Authorize]
+
         public async Task<IActionResult> UpdateBasket(BasketDto basket)
         {
             var result = await servicesManager.BasketService.UpdateBasketAsync(basket);
@@ -28,6 +32,8 @@ namespace Persention
         }
 
         [HttpDelete]
+        [Authorize]
+
         public async Task<IActionResult> DeleteBasket(string id)
         {
              await servicesManager.BasketService.DeleteBasketAsync(id);

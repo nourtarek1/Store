@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Domian.Contracts;
-using Domian.Identity;
+using Domian.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Services.Abstractions;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +19,8 @@ namespace Services
         IMapper mapper,
         IBasketRepository basketRepository,
         ICacheRepsitory cacheRepsitory,
-        UserManager<AppUser> userManager
+        UserManager<AppUser> userManager,
+        IOptions<JwtOptions> options
         ) : IServicesManager
     {
         public IProductService ProductService { get; } = new ProductService(unitOfWork, mapper);
@@ -25,6 +29,8 @@ namespace Services
 
         public ICacheService CacheService { get; } = new CacheService(cacheRepsitory);
 
-        public IAuthService AuthService { get; } = new AuthService(userManager);
+        public IAuthService AuthService { get; } = new AuthService(userManager, options);
+
+        public IOrderSrvice orderSrvice { get; } = new OrderService(mapper , basketRepository,unitOfWork);
     }
 }
